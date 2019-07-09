@@ -1,6 +1,5 @@
-# koa2-mongodb-server
-利用koa2+mongodb搭建一套简易的nodejs后台服务，用于为客户端提供数据请求的数据api接口
-
+# KMAS
+利用koa2+mongodb搭建一套轻型的操作mongodb的后台系统
 # 使用说明
 - 安装NodeJs  
   koa2下，最好安装node7.0以上版本，不然会报错，因为低版本下Koa2部分ES7的语法会不支持
