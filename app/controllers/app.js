@@ -35,25 +35,47 @@ exports.list = async (ctx) => {
 	const limit_data = query.limit || 20 //limit_data赋值，默认为20
 	const page_data = query.page || 1 //page_data赋值，默认为1    
 
-
-	let find = my_model.find((author === 'admin') && {} || {
-		"author": author
-	});
-	console.log(`--author:${author}--limit_data:${limit_data}--page_data:${page_data}`)
-	await find //分页查询
-		.skip((page_data - 1) * limit_data)
-		.limit(parseInt(limit_data))
-		.exec(function(err, doc) { //回调函数
-			if (err) {
-				ctx.body = new ErrorModel({
-					err
-				}, 'false to get list')
-			} else {
-				ctx.body = new SuccessModel({
-					doc
-				}, 'get list ok')
-			}
-		})
+	async function mongoose_find(iauthor,ipage,ilimit,imodel){
+		let find = imodel.find((author === 'admin') && {} || {
+			"author": iauthor
+		});
+		console.log(`--author:${iauthor}--limit_data:${ilimit}--page_data:${ipage}`)
+		await find //分页查询
+			.skip((ipage - 1) * ilimit)
+			.limit(parseInt(ilimit))
+			.exec(function(err, doc) { //回调函数
+				if (err) {
+					ctx.body = new ErrorModel({
+						err
+					}, 'false to get list')
+				} else {
+					ctx.body = new SuccessModel({
+						doc
+					}, 'get list ok')
+				}
+			})
+	}
+	await mongoose_find(author,page_data,limit_data,my_model)
+	
+	
+	// let find = my_model.find((author === 'admin') && {} || {
+	// 	"author": author
+	// });
+	// console.log(`--author:${author}--limit_data:${limit_data}--page_data:${page_data}`)
+	// await find //分页查询
+	// 	.skip((page_data - 1) * limit_data)
+	// 	.limit(parseInt(limit_data))
+	// 	.exec(function(err, doc) { //回调函数
+	// 		if (err) {
+	// 			ctx.body = new ErrorModel({
+	// 				err
+	// 			}, 'false to get list')
+	// 		} else {
+	// 			ctx.body = new SuccessModel({
+	// 				doc
+	// 			}, 'get list ok')
+	// 		}
+	// 	})
 
 
 }
