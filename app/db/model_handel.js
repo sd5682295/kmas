@@ -16,6 +16,7 @@ module.exports = function(itable) {
 	if(typeof table !== 'string'){
 		return new ErrorModel('body.table 数据类型错误，table数据类型应该是string')
 	}
+	console.log(table)
 	
 	return mongoose.model(table, my_schema)
 }
