@@ -10,7 +10,8 @@ const model_handel = require('../db/model_handel')
 const {
 	mongoose_find,
 	mongoose_add,
-	mongoose_del
+	mongoose_del,
+	mongoose_update
 } = require('../db/mongoose_handel')
 
 // var uuid = require('uuid')
@@ -122,44 +123,46 @@ exports.del = async (ctx, next) => {
 	ctx.body = res_data
 	return
 	
-	
-	// const remove_data = my_model.findByIdAndRemove(id, {
-	// 	author: author
-	// })
-	// let res = []
-	// await remove_data.exec(function(err, doc) { //回调函数
-	// 	if (err) {
-	// 		ctx.body = new ErrorModel({
-	// 			err
-	// 		}, 'false to get list')
-	// 	} else {
-	// 		ctx.body = new SuccessModel({
-	// 			doc
-	// 		}, 'get list ok')
-	// 	}
-	// })
 }
 //---------------------------------------------------------------------------------------------------------
-// exports.update = async (ctx, next) => {
-// 	console.log('开始update')
-// 	const id = xss(ctx.request.body.id)
-// 	console.log(`--ctx.request.body.id:${ctx.request.body.id}--ctx.request.body.data:${ctx.request.body.data}`)
-// 	const update_str = JSON.parse(xss(ctx.request.body.data))
-// 	console.log(`--update_str--${update_str}--typeof update_str--${typeof update_str}`)
-// 	const update_data = User.findByIdAndUpdate(id,{data:update_str})
-// 	let res = []
-// 	await update_data.exec(function(err, doc) {
-// 		if (err) {
-// 			console.log('err')
-// 			res = []
-// 		} else {
-// 			console.log(doc)
-// 			res = doc;
-// 		}
-// 	})
-// 	ctx.body = res
-// 	return res
-// }
+exports.update = async (ctx, next) => {
+	const request = ctx.request
+	const query = request.query
+	const id = xss(query.id)
+	if (!id) {
+		ctx.body = new ErrorModel('id 没有赋值,必须赋值才能看到相应数据列表')
+		return false
+	}
+	if (typeof id !== 'string') {
+		ctx.body = new ErrorModel(`id 的数据类型应该是string,实际数据类型是${typeof author}`)
+		return false
+	}
+	const author = xss(query.author)
+	if (!author) {
+		ctx.body = new ErrorModel('body.author 没有赋值,必须赋值才能看到相应数据列表')
+		return false
+	}
+	if (typeof author !== 'string') {
+		ctx.body = new ErrorModel(`body.author 的数据类型应该是string,实际数据类型是${typeof author}`)
+		return false
+	}
+	
+	const update_str = JSON.parse(xss(ctx.request.body.data))
+	const my_model = model_handel(query.table)
+	if (my_model.code === -1) {
+		ctx.body = my_model
+		return false
+	}
+	const res_data = await mongoose_update({id,author,data:update_str,model:my_model})
+	ctx.body = res_data
+	return
+	
+	
+	// console.log(`--update_str--${update_str}--typeof update_str--${typeof update_str}`)
+
+}
+
+
 // exports.findbyid = async (ctx, next) => {
 // 	console.log('update ok')
 // 	const id = xss(ctx.request.body.id)

@@ -71,3 +71,18 @@ let res_data
 	})
 	return res_data
 }
+
+exports.mongoose_update = async (idata) => {
+	const update_data = idata.model.findByIdAndUpdate(idata.id,{data:idata.data})
+	let res = []
+	await update_data.exec(function(err, doc) {
+		if (err) {
+			// console.log('err')
+			res = []
+		} else {
+			// console.log(doc)
+			res = doc;
+		}
+	})
+	return res
+}
