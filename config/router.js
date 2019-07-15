@@ -14,7 +14,7 @@ module.exports = function(){
   // router.post('/update',User.update)
   // router.post('/delete',User.del)
   // router.get('/mongodb/findQuery',User.findQuery)
-  router.get('/list',app.list)
+  router.get('/:author/:table/list',app.list)
   router.post('/add',app.add)
   router.post('/update',app.update)
   router.get('/delete',app.del)

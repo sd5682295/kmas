@@ -20,10 +20,10 @@ const {
 
 
 exports.list = async (ctx) => {
-	const request = ctx.request
-	const query = request.query
-	console.log(`list ok1`)
-	const author = xss(query.author)
+	const query = ctx.request.query
+	const params = ctx.params
+	console.log(`list ok1${params}`)
+	const author = xss(params.author)
 	if (!author) {
 		ctx.body = new ErrorModel('body.author 没有赋值,必须赋值才能看到相应数据列表')
 		return false
@@ -33,7 +33,7 @@ exports.list = async (ctx) => {
 		return false
 	}
 
-	const my_model = model_handel(query.table)
+	const my_model = model_handel(params.table)
 	if (my_model.code === -1) {
 		ctx.body = my_model
 		return false
