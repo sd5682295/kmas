@@ -22,7 +22,6 @@ const {
 exports.list = async (ctx) => {
 	const query = ctx.request.query
 	const params = ctx.params
-	console.log(`list ok1${params}`)
 	const author = xss(params.author)
 	if (!author) {
 		ctx.body = new ErrorModel('body.author 没有赋值,必须赋值才能看到相应数据列表')
@@ -54,21 +53,11 @@ exports.list = async (ctx) => {
 	return
 }
 exports.add = async (ctx, next) => {
-	const request = ctx.request
-	const query = request.query
-	let data = xss(ctx.request.body.data)
-	// data = JSON.parse(data)
-	if (data === '') {
-		data = []
-	} else if (typeof data === 'string' && data[0] !== '[') {
-		data = [{
-				data: data
-			}],
-			console.log(`--data:${data}--typeof data:${typeof data}`)
-	} else {
-		data = JSON.parse(data)
-	}
-	const author = xss(query.author)
+	const query = ctx.request.query
+	const params = ctx.params
+	
+	
+	const author = xss(params.author)
 	if (!author) {
 		ctx.body = new ErrorModel('body.author 没有赋值,必须赋值才能看到相应数据列表')
 		return false
@@ -77,12 +66,27 @@ exports.add = async (ctx, next) => {
 		ctx.body = new ErrorModel(`body.author 的数据类型应该是string,实际数据类型是${typeof author}`)
 		return false
 	}
-	const my_model = model_handel(query.table)
+	
+	const my_model = model_handel(params.table)
 	if (my_model.code === -1) {
 		ctx.body = my_model
 		return false
 	}
-
+	
+	
+	let data = xss(ctx.request.body.data)
+	data = JSON.parse(data)
+	console.log(`--data:${data}--type:${typeof body}`)
+	// if (data === '') {
+	// 	data = []
+	// } else if (typeof data === 'string' && data[0] !== '[') {
+	// 	data = [{
+	// 			data: data
+	// 		}]
+	// } else {
+	// 	data = JSON.parse(data)
+	// }
+	
 	const res_data = await mongoose_add({
 		author,
 		data,
@@ -93,19 +97,11 @@ exports.add = async (ctx, next) => {
 }
 //--------------------------------------------------
 exports.del = async (ctx, next) => {
-	const request = ctx.request
-	const query = request.query
-	console.log('del ok')
-	const id = xss(query.id)
-	if (!id) {
-		ctx.body = new ErrorModel('id 没有赋值,必须赋值才能看到相应数据列表')
-		return false
-	}
-	if (typeof id !== 'string') {
-		ctx.body = new ErrorModel(`id 的数据类型应该是string,实际数据类型是${typeof author}`)
-		return false
-	}
-	const author = xss(query.author)
+	const query = ctx.request.query
+	const params = ctx.params
+	
+	
+	const author = xss(params.author)
 	if (!author) {
 		ctx.body = new ErrorModel('body.author 没有赋值,必须赋值才能看到相应数据列表')
 		return false
@@ -114,11 +110,24 @@ exports.del = async (ctx, next) => {
 		ctx.body = new ErrorModel(`body.author 的数据类型应该是string,实际数据类型是${typeof author}`)
 		return false
 	}
-	const my_model = model_handel(query.table)
+	
+	const id = xss(params.id)
+	if (!id) {
+		ctx.body = new ErrorModel('id 没有赋值,必须赋值才能看到相应数据列表')
+		return false
+	}
+	if (typeof id !== 'string') {
+		ctx.body = new ErrorModel(`id 的数据类型应该是string,实际数据类型是${typeof author}`)
+		return false
+	}
+	
+	const my_model = model_handel(params.table)
 	if (my_model.code === -1) {
 		ctx.body = my_model
 		return false
 	}
+	
+	
 	const res_data = await mongoose_del({id,author,model:my_model})
 	ctx.body = res_data
 	return
@@ -126,18 +135,11 @@ exports.del = async (ctx, next) => {
 }
 //---------------------------------------------------------------------------------------------------------
 exports.update = async (ctx, next) => {
-	const request = ctx.request
-	const query = request.query
-	const id = xss(query.id)
-	if (!id) {
-		ctx.body = new ErrorModel('id 没有赋值,必须赋值才能看到相应数据列表')
-		return false
-	}
-	if (typeof id !== 'string') {
-		ctx.body = new ErrorModel(`id 的数据类型应该是string,实际数据类型是${typeof author}`)
-		return false
-	}
-	const author = xss(query.author)
+	const query = ctx.request.query
+	const params = ctx.params
+	
+	
+	const author = xss(params.author)
 	if (!author) {
 		ctx.body = new ErrorModel('body.author 没有赋值,必须赋值才能看到相应数据列表')
 		return false
@@ -147,13 +149,27 @@ exports.update = async (ctx, next) => {
 		return false
 	}
 	
-	const update_str = JSON.parse(xss(ctx.request.body.data))
-	const my_model = model_handel(query.table)
+	const id = xss(params.id)
+	if (!id) {
+		ctx.body = new ErrorModel('id 没有赋值,必须赋值才能看到相应数据列表')
+		return false
+	}
+	if (typeof id !== 'string') {
+		ctx.body = new ErrorModel(`id 的数据类型应该是string,实际数据类型是${typeof author}`)
+		return false
+	}
+	
+	const my_model = model_handel(params.table)
 	if (my_model.code === -1) {
 		ctx.body = my_model
 		return false
 	}
-	const res_data = await mongoose_update({id,author,data:update_str,model:my_model})
+	if (my_model.code === -1) {
+		ctx.body = my_model
+		return false
+	}
+	let data = JSON.parse(xss(ctx.request.body.data))
+	const res_data = await mongoose_update({id,author,data,model:my_model})
 	ctx.body = res_data
 	return
 	
